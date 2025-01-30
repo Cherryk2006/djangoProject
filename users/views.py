@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+
 
 # Create your views here.
 
@@ -36,7 +37,7 @@ def logout_page(request):
 
 
 def register_page(request):
-    if request.method == "Get":
+    if request.method == "GET":
         return render(request, "register.html")
     else:
         username = request.POST.get("username")
@@ -46,5 +47,7 @@ def register_page(request):
         last_name = request.POST.get("last_name")
 
         user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
+        client_group = Group.objects.get(name="Client")
+        user.groups.add(client_group)
         user.save()
         return HttpResponse("Hello, world. You're at the polls index.")
