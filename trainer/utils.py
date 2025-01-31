@@ -1,31 +1,34 @@
-from datetime import datetime, timedelta
-import booking
+import datetime
+from datetime import timedelta
 
 
-def booking_time_discovery(trainer, service, date, start_time, end_time, booking, service_duration):
+def booking_time_discovery(schedule_start, schedule_end, trainer_bookings, search_window):
 
-    trainer_schedule = trainer.models.TrainerSchedule.filter(trainer=trainer, datetime_start_date=date)
-    trainer_booking = booking.models.Booking.objects.filter(trainer=trainer, datetime_start_date=date)
-    desired_service = trainer.models.Service.objects.get(pk=service)
-    search_window = desired_service.duration
+    start_time = schedule_start
+    end_time = schedule_end
 
-    start_time = datetime.combine(date, trainer_schedule.start_time)
-    end_time = datetime.combine(date, trainer_schedule.end_time)
-
-    all_slots = []
+    all_time_slots = []
     current_time = start_time
-
-    while current_time + timedelta(minutes=service_duration) <= end_time:
-        all_slots.append(current_time)
+    while current_time + timedelta(minutes=search_window) <= end_time:
+        all_time_slots.append(current_time)
         current_time += timedelta(minutes=15)
 
-    free_slots = all_slots[:]
-    for booking in trainer_booking:
-        booked_start = booking.start_time
-        booked_end = booked_start + timedelta(minutes=booking.duration)
+    all_time_slots = [slot for slot in all_time_slots if not (slot >= schedule_start and slot < schedule_end)]
 
-        free_slots = [
-            slot for slot in free_slots
-            if not (booked_start <= slot < booked_end)
-        ]
-    return free_slots
+    for booking in trainer_bookings :
+        booking_start = booking[0]
+        booking_end = booking[1]
+        all_time_slots = [slot for slot in all_time_slots if not (slot >= booking_start and slot < booking_end)]
+
+        return all_time_slots
+
+
+if __name__ == '__main__':
+    trainer_id = 1
+    service_id = 1
+    date = datetime.date(2024, 12, 25)
+
+    available_slots = booking_time_discovery(trainer_id, service_id, date)
+    print("Available slots for booking:")
+    for slot in available_slots:
+        print(slot.strf("%Y-%m-%d %H:%M"))
