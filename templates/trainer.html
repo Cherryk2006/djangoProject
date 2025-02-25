@@ -1,29 +1,48 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <body>
-<h1> one_ service in services </h1>>
-{% for one_service in services %}
-    <br> {{ one_service.categoty.name }}
-    <br> {{ one_service.price }}
-    <br> {{ one_service.duration }}
-{% endfor %}
-<p>
-<h1>AddTrainerService</h1>>
-<form action="/trainer" method="post">
-    <div>
-    {% csrf_token %}
-    category:
-        <select name="category">
-            {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-        </select>
-    <br>
-    duration: <input type="number" name="duration">
-    price: <input type="number" name="price">
-    </div>div>
-    <input type="submit">
-</form>
+    <meta charset="UTF-8">
+    <title>Trainer</title>
+</head>
+<body>
+<hr>
+<h2>Details</h2>
+Name: {{ trainer.trainer.first_name }} <br>
+Last name: {{ trainer.trainer.last_name }} <br>
+Username: {{ trainer.trainer.username }} <br>
+Email: {{ trainer.trainer.email }} <br> <br>
+About me: <br>
+{{ trainer.text }}
+<hr>
+<h2>Services</h2>
+{% if services.count > 0 %}
+    <table>
+        <thead>
+        <tr>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Duration</th>
+            <th>Level</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+            <tr>
+                <td>${{ service.price }}</td>
+                <td>{{ service.category.name }}</td>
+                <td>{{ service.duration }} min</td>
+                <td>{{ service.level }}</td>
+                <td><a href="/trainer/{{ service.trainer.id }}/{{ service.id }}">
+                    More Details
+                </a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>This trainer haven`t published any services yet</p>
+{% endif %}
+<hr>
 </body>
 </html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainers</title>
+</head>
+<body>
+<h2>Trainers</h2>
+<form action="/trainer/">
+    <select name="category">
+        {% if category_id == -1 %}
+            <option value="-1" selected>All</option>
+        {% else %}  
+            <option value="-1" selected>All</option>
+        {% endif %}
+        {% for category in categories %}
+            {% if category_id == category.id %}
+                <option value="{{ category.id }}" selected>{{ category.name }}</option>
+            {% else %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <input type="submit" value="Filter">
+</form>
+{% if trainers.count > 0 %}
+    {% for trainer in trainers %}
+        <hr>
+            Name: {{ trainer.trainer.first_name }} <br>
+            Last name: {{ trainer.trainer.last_name }} <br>
+            <a href="/trainer/{{ trainer.trainer.id }}">More Details</a>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>There are no any trainers yet</p>
+{% endif %}
+</body>
+</html>

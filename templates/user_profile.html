@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+<hr>
+<h2>My bookings: </h2>
+{% if bookings.count > 0 %}
+    <table>
+    <thead>
+    <tr>
+        <th>Start At</th>
+        <th>End At</th>
+        <th>Status</th>
+        <th>Trainer</th>
+        <th>Category of Training</th>
+        <th>Price</th>
+        <th>More Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.datetime_start }}</td>
+            <td>{{ booking.datetime_end }}</td>
+            <td>{{ booking.status }}</td>
+            <td><a href="/trainer/{{ booking.trainer.id }}">
+                {{ booking.trainer.username }}
+            </a></td>
+            <td><a href="/trainer/?category={{ booking.service.category.id }}">
+                {{ booking.service.category.name }}
+            </a></td>
+            <td>${{ booking.service.price }}</td>
+            <td><a href="/booking/{{ booking.id }}">More Details</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You haven`t got any bookings</p>
+{% endif %}
+<hr>
+<h2>Logout</h2>
+<a href="/logout">Logout</a>
+<hr>
+</body>
+</html>

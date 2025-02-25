@@ -30,9 +30,5 @@ urlpatterns = [
     path('logout/', users.views.logout_page, name='users_logout'),
     path('register/', users.views.register_page, name='users_register'),
     path('booking/', include('booking.urls')),
-    path('accept_booking/', booking.views.accept_page, name='accept_booking'),
-    path('cancel_booking/', booking.views.cancel_page, name='cancel_booking'),
     path('trainer/', include('trainer.urls')),
-    path('service/', trainer.views.service_page, name='trainer_service'),
-    path('book_service/', trainer.views.service_booking, name='book_service'),
 ]

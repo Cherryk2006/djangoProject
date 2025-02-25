@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedbacks</title>
+</head>
+<body>
+<h2>User Details</h2>
+Name: {{ user.first_name }} <br>
+Last name: {{ user.last_name }} <br>
+Username: {{ user.username }} <br>
+<h2>Feedbacks</h2>
+{% if ratings.count > 0 %}
+    {% for rating in ratings %}
+    <hr>
+        Rating: {{ rating.rate }}/5 <br>
+        Author: {{ rating.author.username }} <br><br>
+        {{ rating.text }}
+    <hr>
+    {% endfor %}
+{% else %}
+    <p>This user haven`t got any feedbacks yet</p>
+{% endif %}
+<h2>Add feedback</h2>
+<form action="/user/{{ recipient_id }}/add-feedback" method="post">
+    {% csrf_token %}
+    Rate: <input type="number" min="1" max="5" step="1" name="rate"> <br>
+    Text: <textarea name="text"></textarea> <br>
+    <input type="submit" value="Add">
+</form>
+</body>
+</html>

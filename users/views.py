@@ -1,18 +1,39 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
+
+from booking.models import Booking
+from trainer.models import Trainer_schedule, Service, Category
+from users.models import Rating
 
 
 # Create your views here.
 
 
 def user_page(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    if request.user.groups.filter(name="Client").exists():
+        bookings = Booking.objects.filter(user=request.user).all()
+        return render(request, "user_profile.html", {"bookings": bookings})
+    else:
+        schedules = Trainer_schedule.objects.filter(trainer=request.user).all()
+        trainer_services = Service.objects.filter(trainer=request.user).all()
+        bookings = Booking.objects.filter(trainer=request.user).all()
+        categories = Category.objects.all()
+        return render(request, "trainer_profile.html",
+                      {
+                          "schedules": schedules,
+                          "trainer_services": trainer_services,
+                          "categories": categories,
+                          "bookings": bookings,
+                      })
 
 
 def specific_user(request, user_id):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    if request.method == "GET":
+        ratings = Rating.objects.filter(recipient_id=user_id).all()
+        user = User.objects.get(id=user_id)
+        return render(request, "ratings.html", {"ratings": ratings, "recipient_id": user_id, "user": user})
 
 
 def login_page(request):
@@ -24,7 +45,7 @@ def login_page(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse("You are now logged in.")
+            return redirect("/user")
         else:
             return render(request, "login.html")
 
@@ -32,7 +53,7 @@ def login_page(request):
 def logout_page(request):
     if request.user.is_authenticated:
         logout(request)
-        return HttpResponse("You are now logged out.")
+        return redirect("/login")
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
@@ -50,4 +71,15 @@ def register_page(request):
         client_group = Group.objects.get(name="Client")
         user.groups.add(client_group)
         user.save()
-        return HttpResponse("Hello, world. You're at the polls index.")
+        return redirect("/login")
+
+
+def add_feedback(request, user_id):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            rate = int(request.POST.get("rate"))
+            text = request.POST.get("text")
+            rating = Rating(rate=rate, text=text, recipient_id=user_id, author_id=request.user.id)
+            rating.save()
+            return redirect(f"/user/{user_id}")
+        return HttpResponseForbidden()

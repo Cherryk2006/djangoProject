@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from trainer.models import Service
+from trainer.utils import PROCESSING_STATUS
 
 
 # Create your models here.
@@ -13,4 +14,4 @@ class Booking(models.Model):
     datetime_start = models.DateTimeField()
     datetime_end = models.DateTimeField()
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False)
+    status = models.TextField(default=PROCESSING_STATUS)

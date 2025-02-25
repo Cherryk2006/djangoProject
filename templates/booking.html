@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking</title>
+</head>
+<body>
+<hr>
+<h1>Booking Details</h1>
+Client: <a href="/user/{{ booking.user.id }}">{{ booking.user.username }}</a> <br>
+Trainer: <a href="/trainer/{{ booking.trainer.id }}">{{ booking.trainer.username }}</a> <br>
+Service: <a href="/trainer/{{ booking.trainer.id }}/{{ booking.service.id }}">
+    Service Details
+</a> <br>
+Start At: {{ booking.datetime_start }} <br>
+End At: {{ booking.datetime_end }} <br>
+Status: {{ booking.status }} <br>
+{% if not is_user and booking.status != "Accepted" %}
+    <form action="/booking/{{ booking.id }}/accept" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Accept"/>
+    </form>
+{% endif %}
+<form action="/booking/{{ booking.id }}/cancel" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Cancel"/>
+</form>
+<hr>
+</body>
+</html>

@@ -5,13 +5,14 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="/register/trainer/" method="post">
+    <form action="/trainer/register/trainer/" method="post">
         {% csrf_token %}
-        Username: <input type="text" name="username">
-        Password: <input type="password" name="password">
-        First name: <input type="text" name="first_name">
-        Last name: <input type="text" name="last_name">
-        Email: <input type="email" name="email">
+        Username: <input type="text" name="username"> <br>
+        Password: <input type="password" name="password"> <br>
+        First name: <input type="text" name="first_name"> <br>
+        Last name: <input type="text" name="last_name"> <br>
+        Email: <input type="email" name="email"> <br>
+        Description: <textarea name="description"></textarea>
         <br>
         <input type="submit">
     </form>>    

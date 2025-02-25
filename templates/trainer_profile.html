@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainer Profile</title>
+</head>
+<body>
+<hr>
+<h2>My Schedule: </h2>
+{% if schedules.count > 0 %}
+    <table>
+        <thead>
+        <tr>
+            <th>Start At</th>
+            <th>End At</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.datetime_start }}</td>
+                <td>{{ schedule.datetime_end }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Your schedule is empty</p>
+{% endif %}
+
+<hr>
+
+<h2>My Services: </h2>
+{% if trainer_services.count > 0 %}
+    <table>
+        <thead>
+        <tr>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Duration</th>
+            <th>Level</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in trainer_services %}
+            <tr>
+                <td>${{ service.price }}</td>
+                <td>{{ service.category.name }}</td>
+                <td>{{ service.duration }} min</td>
+                <td>{{ service.level }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Your services list is empty</p>
+{% endif %}
+
+<hr>
+
+<h2>My bookings: </h2>
+{% if bookings.count > 0 %}
+    <table>
+    <thead>
+    <tr>
+        <th>Start At</th>
+        <th>End At</th>
+        <th>Status</th>
+        <th>Trainer</th>
+        <th>Category of Training</th>
+        <th>Price</th>
+        <th>More Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.datetime_start }}</td>
+            <td>{{ booking.datetime_end }}</td>
+            <td>{{ booking.status }}</td>
+            <td><a href="/user/{{ booking.user.id }}">
+                {{ booking.user.username }}
+            </a></td>
+            <td><a href="/trainer/?category={{ booking.service.category.id }}">
+                {{ booking.service.category.name }}
+            </a></td>
+            <td>${{ booking.service.price }}</td>
+            <td><a href="/booking/{{ booking.id }}">More Details</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You haven`t got any bookings</p>
+{% endif %}
+
+<hr>
+
+<h2>Add Schedule</h2>
+<form action="/trainer/schedule/" method="post">
+    {% csrf_token %}
+    Day: <input type="date" name="day"/> <br>
+    Start At: <input type="time" name="start_at"/> <br>
+    End At: <input type="time" name="end_at"/> <br>
+    <input type="submit" value="Add">
+</form>
+
+<hr>
+
+<h2>Add Service</h2>
+<form action="/trainer/services/" method="post">
+    {% csrf_token %}
+    Category: <select name="category">
+    {% for category in categories %}
+        <option value="{{ category.name }}">{{ category.name }}</option>
+    {% endfor %}
+</select> <br>
+    Price: <input name="price" type="number" min="0" step="0.01"/> <br>
+    Level: <select name="level">
+        <option value="1">Novice</option>
+        <option value="2">Medium</option>
+        <option value="3">Advanced</option>
+    </select> <br>
+    Duration (in minute): <input type="number" name="duration" min="30" step="30" max="480"> <br>
+    <input type="submit" value="Add">
+</form>
+
+<hr>
+
+<h2>Logout</h2>
+<a href="/logout">Logout</a>
+
+<hr>
+
+</body>
+</html>

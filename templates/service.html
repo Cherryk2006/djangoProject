@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service</title>
+</head>
+<body>
+<hr>
+<h2>Details</h2>
+Category: {{ service.category.name }} <br>
+Price: ${{ service.price }} <br>
+Duration: {{ service.duration }} minutes <br>
+Level: {{ service.level }} <br>
+Trainer: <a href="/trainer/{{ service.trainer.id }}">{{ service.trainer.username }}</a>
+<hr>
+{% if is_user %}
+    <h2>Available slots</h2>
+    {% for slot in available_slots %}
+        <p>{{ slot.date }}: </p>
+        {% if slot.is_present %}
+            {% for available_time in slot.slots %}
+                <form
+                        style="display: inline-block"
+                        action="/trainer/{{ service.trainer.id }}/{{ service.id }}/booking"
+                        method="post"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ slot.date }}" name="date">
+                    <input type="hidden" value="{{ available_time }}" name="time">
+                    <input type="submit" value="{{ available_time }}"/>
+                </form>
+            {% endfor %}
+        {% else %}
+            <p>There is no available slots here</p>
+        {% endif %}
+    {% endfor %}
+    <hr>
+{% endif %}
+</body>
+</html>
